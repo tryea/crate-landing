@@ -1,0 +1,111 @@
+---
+import "../styles/globals.css";
+
+/*
+ * Placeholder landing — scaffolding stage only.
+ *
+ * Hero + trust-strip + sections will land in follow-up iterations per
+ * GH #5 (Mercury-style hero + email capture + trust strip). This page
+ * exists to confirm:
+ *   - Astro 6 + Tailwind v4 wiring works
+ *   - Light-only token system renders (canvas / canvas-alt / ink)
+ *   - Section-bg rhythm shows alternating neutral grays per DEC-006
+ *   - Geist font stack loads
+ *
+ * Do NOT treat any copy here as the real LP copy — that comes next.
+ */
+
+const trustStrip = [
+  { value: "90/90", label: "Jest specs · domain logic" },
+  { value: "0", label: "cross-tenant leaks · CI-asserted" },
+  { value: "5", label: "SKUs · live demo" },
+  { value: "16", label: "valuation specs · WAC" },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content="Crate — ops-grade inventory management for your warehouse. Append-only ledger, no negative stock, audit-log everything."
+    />
+    <title>Crate — ops-grade inventory management</title>
+  </head>
+  <body class="bg-canvas text-ink">
+    <main>
+      <!-- HERO (placeholder — real hero per DEC-006 §Implementation constraints lands in GH #5) -->
+      <section class="bg-canvas border-b border-border-soft">
+        <div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+          <p class="font-mono text-xs uppercase tracking-widest text-ink-soft mb-6">
+            01 / In construction
+          </p>
+          <h1 class="text-5xl sm:text-6xl font-semibold tracking-tight text-ink max-w-3xl">
+            Stock you can actually trust.
+          </h1>
+          <p class="mt-6 text-lg text-ink-mute max-w-2xl leading-relaxed">
+            Ops-grade inventory management for your warehouse. Append-only
+            ledger. No negative stock. Audit-log everything.
+          </p>
+
+          <!-- Email capture placeholder (real impl in GH #5 / DEC-006 §Implementation constraints) -->
+          <div class="mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
+            <input
+              type="email"
+              placeholder="you@warehouse.com"
+              disabled
+              class="flex-1 rounded-md border border-border bg-canvas-alt px-4 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <button
+              type="button"
+              disabled
+              class="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Notify me
+            </button>
+          </div>
+          <p class="mt-3 text-xs text-ink-soft">
+            Demo currently invite-only. No spam. You can unsubscribe anytime.
+          </p>
+        </div>
+      </section>
+
+      <!-- TRUST STRIP (placeholder structure — real data lands via DEC-006 §verifiable stats) -->
+      <section class="bg-canvas-alt border-b border-border-soft">
+        <div class="mx-auto max-w-6xl px-6 py-12">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
+            {trustStrip.map((stat) => (
+              <div class="flex flex-col gap-1.5">
+                <div class="text-3xl font-semibold tracking-tight text-ink">
+                  {stat.value}
+                </div>
+                <div class="font-mono text-xs uppercase tracking-wider text-ink-soft">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer / scope honesty -->
+      <section class="bg-canvas py-16">
+        <div class="mx-auto max-w-6xl px-6">
+          <p class="text-sm text-ink-mute">
+            Scaffolding stage — Mercury LP hero + asymmetric features +
+            founder testimonial land in upcoming iterations
+            (<a href="https://github.com/tryea/crate-webapp/issues/5"
+                class="text-ink underline-offset-4 hover:underline">GH&nbsp;#5</a>).
+            Live app: <a href="https://app.crate.ersaptaaristo.dev"
+              class="text-ink underline-offset-4 hover:underline">app.crate.ersaptaaristo.dev</a>.
+            Repo: <a href="https://github.com/tryea/crate-landing"
+              class="text-ink underline-offset-4 hover:underline">tryea/crate-landing</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

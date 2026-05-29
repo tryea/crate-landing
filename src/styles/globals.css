@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/*
+ * Crate marketing landing — Tailwind v4 token system.
+ *
+ * Per DEC-006 (single-anchor Mercury commit, light-only v1):
+ *   - Light theme ONLY. No `.dark` block, no FOUC script.
+ *   - Token names mirror the app's globals.css (1:1 mental model when porting
+ *     UI shapes), but the LP renders against light surfaces only.
+ *   - Section-rhythm color = NEUTRAL cool-gray (R=G=B in oklch chroma=0).
+ *     Warm off-white is FORBIDDEN per ui-audit Attio rejection rule.
+ *
+ * Source of truth: DEC-006 §Implementation constraints.
+ *   ✗ No `.dark` block (Mercury landing is light-only)
+ *   ✗ No FOUC-prevention script in <head>
+ *   ✗ No warm-tinted bg (use R=G=B oklch only)
+ *   ✓ Section-bg rhythm = alternating canvas/canvas-alt
+ *   ✓ All tokens map to a `--color-*` alias for utilities
+ */
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-canvas-alt: var(--canvas-alt);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-mute: var(--ink-mute);
+  --color-ink-soft: var(--ink-soft);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  /* Mirror crate-webapp font setup — Geist for body, Geist Mono for technical
+     labels (limited to ≤3 sections per ui-audit mono-restraint rule). */
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-heading: var(--font-sans);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+}
+
+:root {
+  /* Dominant surfaces — pure neutral light. R=G=B at chroma 0. */
+  --canvas: oklch(1 0 0);             /* white — primary marketing surface */
+  --canvas-alt: oklch(0.975 0 0);     /* neutral cool-gray for section rhythm */
+  --surface: oklch(0.99 0 0);         /* card surfaces (slightly off-canvas) */
+
+  /* Ink scale — high contrast for trust signal. Ported from crate-webapp's
+     light :root primary/foreground pair (0.205 / 0.145). */
+  --ink: oklch(0.145 0 0);            /* primary text — near-black */
+  --ink-mute: oklch(0.4 0 0);         /* secondary text — for subheads */
+  --ink-soft: oklch(0.556 0 0);       /* tertiary text — fine print + disclaimer */
+
+  /* Lines + borders — calm, low contrast. */
+  --border: oklch(0.922 0 0);
+  --border-soft: oklch(0.95 0 0);
+
+  /* Brand surfaces — Crate's restrained primary = near-black (matches app). */
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+
+  /* Accent — for trust-strip highlights only. Subtle. */
+  --accent: oklch(0.97 0 0);
+
+  /* Semantic — for verifiable-stat highlights per DEC-006 (NOT for stat-rainbow). */
+  --success: oklch(0.62 0.14 152);
+  --warning: oklch(0.78 0.14 78);
+  --info: oklch(0.66 0.13 235);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background-color: var(--canvas);
+    /* High-density text rendering — Mercury trust-signal aesthetic */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+  }
+  /* Mercury-grammar — high weight contrast (no italic display per DEC-006) */
+  h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+}
