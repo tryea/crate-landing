@@ -2,17 +2,17 @@
 import "../styles/globals.css";
 
 /*
- * Placeholder landing — scaffolding stage only.
+ * Crate marketing landing — Mercury LP grammar single-anchor commit
+ * per DEC-006. Light-only.
  *
- * Hero + trust-strip + sections will land in follow-up iterations per
- * GH #5 (Mercury-style hero + email capture + trust strip). This page
- * exists to confirm:
- *   - Astro 6 + Tailwind v4 wiring works
- *   - Light-only token system renders (canvas / canvas-alt / ink)
- *   - Section-bg rhythm shows alternating neutral grays per DEC-006
- *   - Geist font stack loads
+ * Layout (top → bottom):
+ *   1. HERO — eyebrow + headline + subhead + primary CTA (demo) + secondary email capture + scope disclaimer
+ *   2. TRUST STRIP — 4 verifiable stats (mono labels, R=G=B neutral-gray bg)
+ *   3. WHAT IT DOES — 3 equal-status feature cards (NO bento per ui-audit hierarchy honesty)
+ *   4. FOOTER — single-paragraph wayfinding (app link, repo link)
  *
- * Do NOT treat any copy here as the real LP copy — that comes next.
+ * Founder testimonial + asymmetric feature sections (Mercury full grammar)
+ * land in next iteration once positioning copy is locked.
  */
 
 const trustStrip = [
@@ -20,6 +20,24 @@ const trustStrip = [
   { value: "0", label: "cross-tenant leaks · CI-asserted" },
   { value: "5", label: "SKUs · live demo" },
   { value: "16", label: "valuation specs · WAC" },
+];
+
+const features = [
+  {
+    title: "Append-only ledger",
+    body:
+      "Every movement is a row in stock_movements. No edits, no deletes — corrections happen via adjustment movements with a recorded reason.",
+  },
+  {
+    title: "Atomic transfers",
+    body:
+      "A→B moves run in one Postgres transaction with SELECT FOR UPDATE row locks. Half-completed transfers are mathematically impossible.",
+  },
+  {
+    title: "Perpetual WAC valuation",
+    body:
+      "Weighted-average cost recalculated on every receive. 16 Jest specs cover the math — the dashboard total is the same math the tests assert.",
+  },
 ];
 ---
 
@@ -31,49 +49,59 @@ const trustStrip = [
     <meta name="generator" content={Astro.generator} />
     <meta
       name="description"
-      content="Crate — ops-grade inventory management for your warehouse. Append-only ledger, no negative stock, audit-log everything."
+      content="Crate — ops-grade inventory management. Append-only ledger, atomic transfers, perpetual weighted-average valuation. Open the live demo."
     />
+    <meta property="og:title" content="Crate — ops-grade inventory management" />
+    <meta
+      property="og:description"
+      content="An inventory system built around how stock actually moves. Live demo: app.crate.ersaptaaristo.dev."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://crate.ersaptaaristo.dev/" />
     <title>Crate — ops-grade inventory management</title>
   </head>
   <body class="bg-canvas text-ink">
     <main>
-      <!-- HERO (placeholder — real hero per DEC-006 §Implementation constraints lands in GH #5) -->
+      <!-- HERO -->
       <section class="bg-canvas border-b border-border-soft">
         <div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <p class="font-mono text-xs uppercase tracking-widest text-ink-soft mb-6">
-            01 / In construction
+            For warehouse operations
           </p>
           <h1 class="text-5xl sm:text-6xl font-semibold tracking-tight text-ink max-w-3xl">
             Stock you can actually trust.
           </h1>
           <p class="mt-6 text-lg text-ink-mute max-w-2xl leading-relaxed">
-            Ops-grade inventory management for your warehouse. Append-only
-            ledger. No negative stock. Audit-log everything.
+            An inventory system built around how stock actually moves.
+            Append-only ledger, atomic transfers, audit log everything.
+            Made for operators who'd rather read the receipt than trust the dashboard.
           </p>
 
-          <!-- Email capture placeholder (real impl in GH #5 / DEC-006 §Implementation constraints) -->
-          <div class="mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
-            <input
-              type="email"
-              placeholder="you@warehouse.com"
-              disabled
-              class="flex-1 rounded-md border border-border bg-canvas-alt px-4 py-2.5 text-sm text-ink placeholder:text-ink-soft focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
-            <button
-              type="button"
-              disabled
-              class="rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed"
+          <!-- Primary CTA: try the live demo. Secondary: email for invite-only future. -->
+          <div class="mt-10 flex flex-col sm:flex-row gap-3 items-start">
+            <a
+              href="https://app.crate.ersaptaaristo.dev/sign-in"
+              class="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Notify me
-            </button>
+              Open the live demo
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M5 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+            <a
+              href="#what-it-does"
+              class="inline-flex items-center gap-2 rounded-md border border-border bg-canvas px-5 py-2.5 text-sm font-medium text-ink hover:bg-canvas-alt transition-colors"
+            >
+              How it works
+            </a>
           </div>
-          <p class="mt-3 text-xs text-ink-soft">
-            Demo currently invite-only. No spam. You can unsubscribe anytime.
+          <p class="mt-4 text-xs text-ink-soft max-w-md">
+            Demo credentials in the sign-in page footer. No spam, no email gate — just open it.
           </p>
         </div>
       </section>
 
-      <!-- TRUST STRIP (placeholder structure — real data lands via DEC-006 §verifiable stats) -->
+      <!-- TRUST STRIP — 4 verifiable stats -->
       <section class="bg-canvas-alt border-b border-border-soft">
         <div class="mx-auto max-w-6xl px-6 py-12">
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-8">
@@ -91,21 +119,51 @@ const trustStrip = [
         </div>
       </section>
 
-      <!-- Footer / scope honesty -->
-      <section class="bg-canvas py-16">
-        <div class="mx-auto max-w-6xl px-6">
-          <p class="text-sm text-ink-mute">
-            Scaffolding stage — Mercury LP hero + asymmetric features +
-            founder testimonial land in upcoming iterations
-            (<a href="https://github.com/tryea/crate-webapp/issues/5"
-                class="text-ink underline-offset-4 hover:underline">GH&nbsp;#5</a>).
-            Live app: <a href="https://app.crate.ersaptaaristo.dev"
-              class="text-ink underline-offset-4 hover:underline">app.crate.ersaptaaristo.dev</a>.
-            Repo: <a href="https://github.com/tryea/crate-landing"
-              class="text-ink underline-offset-4 hover:underline">tryea/crate-landing</a>.
-          </p>
+      <!-- WHAT IT DOES — 3 equal-status cards (NO bento per ui-audit hierarchy honesty) -->
+      <section id="what-it-does" class="bg-canvas border-b border-border-soft">
+        <div class="mx-auto max-w-6xl px-6 py-24">
+          <div class="max-w-2xl mb-12">
+            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-ink">
+              How stock actually moves.
+            </h2>
+            <p class="mt-4 text-lg text-ink-mute leading-relaxed">
+              Three guarantees the data layer enforces — not three features
+              the UI promises.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {features.map((feature) => (
+              <div class="flex flex-col gap-3 rounded-lg border border-border-soft bg-surface p-6">
+                <h3 class="text-lg font-semibold text-ink">{feature.title}</h3>
+                <p class="text-sm text-ink-mute leading-relaxed">{feature.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
+
+      <!-- FOOTER — wayfinding only, no copywriter prose -->
+      <footer class="bg-canvas py-12">
+        <div class="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+          <p class="text-sm text-ink-soft">
+            Crate — a portfolio project by Sapta.
+          </p>
+          <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <a href="https://app.crate.ersaptaaristo.dev"
+               class="text-ink-mute hover:text-ink underline-offset-4 hover:underline">
+              Live demo
+            </a>
+            <a href="https://github.com/tryea/crate-webapp"
+               class="text-ink-mute hover:text-ink underline-offset-4 hover:underline">
+              App repo
+            </a>
+            <a href="https://github.com/tryea/crate-landing"
+               class="text-ink-mute hover:text-ink underline-offset-4 hover:underline">
+              Landing repo
+            </a>
+          </div>
+        </div>
+      </footer>
     </main>
   </body>
 </html>
