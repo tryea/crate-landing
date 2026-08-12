@@ -1,42 +1,62 @@
 @import "tailwindcss";
 
 /*
- * Crate marketing landing — Tailwind v4 token system.
+ * Crate marketing landing, token system.
  *
- * Per DEC-006 (single-anchor Mercury commit, light-only v1):
- *   - Light theme ONLY. No `.dark` block, no FOUC script.
- *   - Token names mirror the app's globals.css (1:1 mental model when porting
- *     UI shapes), but the LP renders against light surfaces only.
- *   - Section-rhythm color = NEUTRAL cool-gray (R=G=B in oklch chroma=0).
- *     Warm off-white is FORBIDDEN per ui-audit Attio rejection rule.
+ * SUPERSEDES DEC-006. That record committed to a Mercury anchor with
+ * `--primary` at oklch(0.205 0 0), chroma zero, and called it restraint.
+ * Measured 12 Aug 2026: the page defined fourteen colours, eleven of them
+ * pure greyscale, and the three chromatic ones never reached the screen.
+ * A page with no brand colour is not restrained, it is unfinished, and it
+ * reads as a shadcn neutral theme nobody ever chose. That is why this site
+ * was never launched.
  *
- * Source of truth: DEC-006 §Implementation constraints.
- *   ✗ No `.dark` block (Mercury landing is light-only)
- *   ✗ No FOUC-prevention script in <head>
- *   ✗ No warm-tinted bg (use R=G=B oklch only)
- *   ✓ Section-bg rhythm = alternating canvas/canvas-alt
- *   ✓ All tokens map to a `--color-*` alias for utilities
+ * Two things changed here.
+ *
+ * ANCHOR: Resend, not Mercury. Mercury's grammar is built for non-technical
+ * operators who need a regulator's reassurance. The people who read this page
+ * are technical clients judging whether the author can build systems, and the
+ * page was already speaking to them (mono eyebrows, mono stat labels) while
+ * claiming a Mercury anchor in its comments. One anchor, stated once, honoured
+ * everywhere.
+ *
+ * BRAND COLOUR: amber. Not picked from a mood board. `oklch(0.78 0.14 78)` is
+ * already the low-stock signal inside the product, so it is the one colour a
+ * reader will meet again in the screenshots and again in the running app. It
+ * also happens to be what a warehouse looks like.
+ *
+ * Warm surfaces stay FORBIDDEN (ui-audit Attio rejection). Colour rhythm comes
+ * from a neutral grey band and a near-black band, never from tinted paper:
+ *   white, then neutral grey, then white, then near-black, then white.
+ *
+ * Swapping the brand colour later is three lines: --brand, --brand-ink,
+ * --brand-dim. Nothing else in this file hardcodes a hue.
  */
 
 @theme inline {
   --color-canvas: var(--canvas);
   --color-canvas-alt: var(--canvas-alt);
+  --color-canvas-deep: var(--canvas-deep);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-ink-mute: var(--ink-mute);
   --color-ink-soft: var(--ink-soft);
+  --color-ink-invert: var(--ink-invert);
+  --color-ink-invert-mute: var(--ink-invert-mute);
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
+  --color-border-deep: var(--border-deep);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-dim: var(--brand-dim);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-accent: var(--accent);
   --color-success: var(--success);
-  --color-warning: var(--warning);
   --color-info: var(--info);
 
   /* Geist self-hosted via @fontsource-variable/geist + geist-mono.
      fontsource exposes the variable font as 'Geist Variable' / 'Geist Mono
-     Variable' (not bare 'Geist') — match the family name exactly or the
+     Variable' (not bare 'Geist'). Match the family name exactly or the
      browser falls through to the system fallback silently. */
   --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -50,31 +70,35 @@
 }
 
 :root {
-  /* Dominant surfaces — pure neutral light. R=G=B at chroma 0. */
-  --canvas: oklch(1 0 0);             /* white — primary marketing surface */
-  --canvas-alt: oklch(0.975 0 0);     /* neutral cool-gray for section rhythm */
-  --surface: oklch(0.99 0 0);         /* card surfaces (slightly off-canvas) */
+  /* Surfaces. Every light surface is chroma 0, R=G=B. No warm paper. */
+  --canvas: oklch(1 0 0);
+  --canvas-alt: oklch(0.975 0 0);
+  --canvas-deep: oklch(0.185 0 0);   /* the dark band, near-black */
+  --surface: oklch(0.99 0 0);
 
-  /* Ink scale — high contrast for trust signal. Ported from crate-webapp's
-     light :root primary/foreground pair (0.205 / 0.145). */
-  --ink: oklch(0.145 0 0);            /* primary text — near-black */
-  --ink-mute: oklch(0.4 0 0);         /* secondary text — for subheads */
-  --ink-soft: oklch(0.556 0 0);       /* tertiary text — fine print + disclaimer */
+  /* Ink on light. */
+  --ink: oklch(0.145 0 0);
+  --ink-mute: oklch(0.4 0 0);
+  --ink-soft: oklch(0.556 0 0);
 
-  /* Lines + borders — calm, low contrast. */
+  /* Ink on the dark band. */
+  --ink-invert: oklch(0.985 0 0);
+  --ink-invert-mute: oklch(0.72 0 0);
+
   --border: oklch(0.922 0 0);
   --border-soft: oklch(0.95 0 0);
+  --border-deep: oklch(0.28 0 0);    /* borders inside the dark band */
 
-  /* Brand surfaces — Crate's restrained primary = near-black (matches app). */
-  --primary: oklch(0.205 0 0);
+  /* Brand. --brand fills, --brand-ink is the only one safe as text on white
+     (the fill is far too light to read at 4.5:1), --brand-dim sits on dark. */
+  --brand: oklch(0.78 0.14 78);
+  --brand-ink: oklch(0.52 0.13 68);
+  --brand-dim: oklch(0.84 0.13 82);
+
+  --primary: oklch(0.185 0 0);
   --primary-foreground: oklch(0.985 0 0);
 
-  /* Accent — for trust-strip highlights only. Subtle. */
-  --accent: oklch(0.97 0 0);
-
-  /* Semantic — for verifiable-stat highlights per DEC-006 (NOT for stat-rainbow). */
   --success: oklch(0.62 0.14 152);
-  --warning: oklch(0.78 0.14 78);
   --info: oklch(0.66 0.13 235);
 }
 
@@ -86,7 +110,7 @@
     font-family: var(--font-sans);
     color: var(--ink);
     background-color: var(--canvas);
-    /* High-density text rendering — Mercury trust-signal aesthetic */
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -95,9 +119,23 @@
     background-color: var(--canvas);
     color: var(--ink);
   }
-  /* Mercury-grammar — high weight contrast (no italic display per DEC-006) */
   h1, h2, h3 {
     font-weight: 600;
     letter-spacing: -0.025em;
+  }
+  /* Screenshots carry the product's own colour. Give them a real edge so they
+     read as artefacts sitting on the page, not as background imagery. */
+  .shot {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / 0.04),
+      0 12px 32px -12px oklch(0 0 0 / 0.18);
+  }
+  .shot-dark {
+    border-color: var(--border-deep);
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / 0.3),
+      0 20px 48px -16px oklch(0 0 0 / 0.55);
   }
 }
