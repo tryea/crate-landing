@@ -1,375 +1,429 @@
 ---
-import "@fontsource-variable/geist";
-import "@fontsource-variable/geist-mono";
 import "../styles/globals.css";
 
 /*
- * Crate marketing landing. Resend anchor, single commit, light base with one
- * dark band. Supersedes DEC-006, see the note at the top of globals.css.
+ * Crate marketing landing.
  *
- * The previous version was 1437px tall, 178 words, and carried zero pictures
- * of the product it was selling. It had one screen of hero, a stat strip, three
- * cards, a footer. That is a scaffold. Everything below the trust strip here is
- * the half that was missing: the doubt-clearing section, built out of the
- * product's own screenshots rather than adjectives.
+ * The hero is the artefact itself: a live HTML ledger table, not a picture of
+ * one. Two of its rows carry the same second and the same reference with
+ * opposite signs, which is the whole atomicity argument made without a sentence
+ * of explanation. Product screenshots still appear, but lower, where they show
+ * the same table running rather than standing in for it.
  *
  * Order:
- *   nav
- *   1. hero              headline, subhead, CTA pair, dashboard shot
- *   2. trust strip       four numbers, each checkable in the repo
- *   3. how stock moves   three guarantees, equal weight, uniform grid
- *   4. the ledger        DARK band, movements shot, the append-only argument
- *   5. purchase orders   the five-state machine, orders shot
- *   6. check it yourself doubt-clearing, four ways to verify without asking
- *   7. close             one CTA
+ *   header
+ *   1. hero        eyebrow, headline, lead, CTA pair, the ledger table
+ *   2. thesis      what the two marked rows prove
+ *   3. numbers     four figures, each one countable by the reader in the repo
+ *   4. how         three rules the database enforces
+ *   5. movements   DARK band, the same table running
+ *   6. orders      the five-state machine
+ *   7. verify      three places to check without taking my word
+ *   8. closer      one CTA plus a recap of what the thing is
  *   footer
  *
- * Every number on this page was read out of the repo on 12 Aug 2026, not
- * remembered. The old strip said "5 SKUs" and the demo had eight by then, which
- * is exactly how a stat strip turns into a liability. These four are structural
- * (tests, journeys, guards, decision records) so they do not rot when the seed
- * changes.
+ * EVERY NUMBER HERE IS COUNTABLE BY THE READER. Two claims were removed rather
+ * than repaired: "20 decision records", whose link answered 404 because those
+ * documents are not published, and "223 unit specs, 13 suites", which no reader
+ * could arrive at from the public repo. What is left is 14 files matching
+ * e2e/*.spec.ts and 16 unit spec files under src/**\/__tests__, both counted
+ * from the tree of main on 1 Sep 2026 and both countable again by anyone.
+ *
+ * Demo credentials are deliberately absent from this page.
  */
 
-const trustStrip = [
-  { value: "223", label: "unit specs · 13 suites" },
-  { value: "14", label: "end-to-end journeys" },
-  { value: "5", label: "guards per mutating request" },
-  { value: "20", label: "decision records" },
+const APP = "https://app.crate.ersaptaaristo.dev";
+const DEMO = `${APP}/sign-in`;
+const REPO = "https://github.com/tryea/crate-webapp";
+const CI = `${REPO}/actions/workflows/ci.yml`;
+const LANDING_REPO = "https://github.com/tryea/crate-landing";
+
+const mark =
+  "M4 3h22a2 2 0 0 1 2 2v1.5a2 2 0 0 1-2 2H10v14h16a2 2 0 0 1 2 2V26a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z";
+
+/* Five rows of the seeded demo, read at one moment. Rows three and four are the
+   pair: one transaction, one reference, one second, opposite signs. */
+const rows = [
+  {
+    when: "Aug 12, 2026 16:35",
+    type: "Adjustment",
+    name: "Cold Brew Coffee 250ml",
+    sku: "BEV-002",
+    bin: "A1",
+    qty: "-2",
+    dir: "out",
+    reason: "count correction",
+    ref: "none",
+    pair: false,
+  },
+  {
+    when: "Aug 12, 2026 15:10",
+    type: "Stock out",
+    name: "All-Purpose Cleaner 1L",
+    sku: "CLN-001",
+    bin: "A1",
+    qty: "-9",
+    dir: "out",
+    reason: "sale",
+    ref: "SO-2026-0217",
+    pair: false,
+  },
+  {
+    when: "Aug 12, 2026 11:50",
+    type: "Transfer in",
+    name: "Gel Pen 0.5mm, box of 12",
+    sku: "STA-002",
+    bin: "B1",
+    qty: "+12",
+    dir: "in",
+    reason: "transfer",
+    ref: "TRF-2026-0061",
+    pair: true,
+  },
+  {
+    when: "Aug 12, 2026 11:50",
+    type: "Transfer out",
+    name: "Gel Pen 0.5mm, box of 12",
+    sku: "STA-002",
+    bin: "A2",
+    qty: "-12",
+    dir: "out",
+    reason: "transfer",
+    ref: "TRF-2026-0061",
+    pair: true,
+  },
+  {
+    when: "Aug 12, 2026 08:20",
+    type: "Stock in",
+    name: "Mineral Water 600ml",
+    sku: "BEV-001",
+    bin: "A1",
+    qty: "+480",
+    dir: "in",
+    reason: "purchase",
+    ref: "PO-2026-011",
+    pair: false,
+  },
 ];
 
-const guarantees = [
+const nums = [
+  { n: "14", k: "End-to-end spec files", how: "e2e/*.spec.ts on main" },
+  { n: "16", k: "Unit spec files", how: "src/**/__tests__" },
+  { n: "1", k: "Table allowed to move stock", how: "stock_movements" },
+  { n: "0", k: "Rows ever edited or deleted", how: "by design, not by policy" },
+];
+
+const rules = [
   {
-    n: "01",
+    num: "01",
     title: "Append-only ledger",
-    body:
-      "Every movement is one row in stock_movements. No edits and no deletes. A correction is its own row with a reason attached, so the mistake and the fix both survive.",
+    body: "Every movement is one row. A correction is its own new row with a reason attached, so both the mistake and the fix survive.",
   },
   {
-    n: "02",
+    num: "02",
     title: "Atomic transfers",
-    body:
-      "A move from one bin to another runs as a single Postgres transaction holding SELECT FOR UPDATE row locks. A half-finished transfer is not something the database will store.",
+    body: "A move between bins runs as one transaction holding SELECT FOR UPDATE row locks. Half a transfer is not a value this schema can store.",
   },
   {
-    n: "03",
-    title: "Perpetual WAC valuation",
-    body:
-      "Weighted-average cost is recalculated on every receipt. The total on the dashboard is produced by the same function the unit tests assert against.",
+    num: "03",
+    title: "Perpetual weighted-average cost",
+    body: "Cost is recalculated on every receipt. The total on the dashboard is produced by the same function the unit tests assert against.",
   },
 ];
 
-const verify = [
+const notes = [
   {
-    label: "Open it",
-    body: "The demo is public and seeded. No signup, no email gate, no sales call.",
-    href: "https://app.crate.ersaptaaristo.dev/sign-in",
-    cta: "app.crate.ersaptaaristo.dev",
+    title: "Paired",
+    body: "A transfer writes two rows sharing one group id. Either both land or neither does.",
   },
   {
-    label: "Read it",
-    body: "Every line, including the migrations, the RLS policies, and the tests that back the numbers above.",
-    href: "https://github.com/tryea/crate-webapp",
-    cta: "github.com/tryea/crate-webapp",
+    title: "Attributed",
+    body: "Every row carries its author and an absolute timestamp. No relative time anywhere.",
   },
   {
-    label: "Watch it run",
-    body: "CI runs the static gates on every pull request and the full Playwright suite on main.",
-    href: "https://github.com/tryea/crate-webapp/actions/workflows/ci.yml",
-    cta: "CI workflow",
-  },
-  {
-    label: "Read the arguments",
-    body: "Twenty decision records, written before the code, covering the persistence layer through the loading states.",
-    href: "https://github.com/tryea/crate-webapp/tree/main/docs/decisions",
-    cta: "Decision records",
+    title: "Bounded",
+    body: "Stock cannot go negative unless an admin turns on backorder, and that switch is itself an audited setting.",
   },
 ];
+
+const checks = [
+  {
+    title: "Open it",
+    body: "The demo is public and seeded. Move some stock and watch the ledger disagree with nobody.",
+    href: DEMO,
+    url: "app.crate.ersaptaaristo.dev",
+  },
+  {
+    title: "Read it",
+    body: "Every line, including the migrations, the row-level security policies, and the tests that back the numbers above.",
+    href: REPO,
+    url: "github.com/tryea/crate-webapp",
+  },
+  {
+    title: "Watch it run",
+    body: "CI runs the static gates on every pull request and the full Playwright suite on main.",
+    href: CI,
+    url: "actions/workflows/ci.yml",
+  },
+];
+
+const recap = [
+  ["Stack", "Next.js, TypeScript, Postgres"],
+  ["Access control", "row-level security"],
+  ["Stock writes", "one table, append only"],
+  ["Source", "public"],
+  ["Sign-up required", "none"],
+];
+
+const description =
+  "Crate keeps every stock movement as a row and adds them up. Open the live demo or read the source.";
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta
-      name="description"
-      content="Crate is an inventory system with an append-only ledger, atomic transfers, and perpetual weighted-average valuation. Public demo, no signup."
-    />
-    <meta property="og:title" content="Crate, ops-grade inventory management" />
-    <meta
-      property="og:description"
-      content="An append-only ledger, atomic transfers, and valuation the tests assert. Open the demo at app.crate.ersaptaaristo.dev."
-    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Crate, an append-only inventory ledger</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content="Crate, an append-only inventory ledger" />
+    <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://crate.ersaptaaristo.dev/" />
-    <title>Crate, ops-grade inventory management</title>
   </head>
-  <body class="bg-canvas text-ink">
-    <!-- NAV. The old page had none, so a reader landed with nothing to hold. -->
-    <header class="sticky top-0 z-50 border-b border-border-soft bg-canvas/85 backdrop-blur">
-      <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <a href="/" class="flex items-center gap-2.5">
-          <span class="block h-4 w-4 rounded-[3px] bg-brand" aria-hidden="true"></span>
-          <span class="text-sm font-semibold tracking-tight">Crate</span>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="hdr">
+      <div class="wrap">
+        <a class="brand" href="#top">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d={mark} /></svg>
+          Crate
         </a>
-        <nav class="flex items-center gap-6 text-sm">
-          <a href="#ledger" class="hidden text-ink-mute transition-colors hover:text-ink sm:block">The ledger</a>
-          <a href="#verify" class="hidden text-ink-mute transition-colors hover:text-ink sm:block">Verify it</a>
-          <a
-            href="https://app.crate.ersaptaaristo.dev/sign-in"
-            class="rounded-md bg-brand px-3.5 py-1.5 text-sm font-medium text-ink transition-opacity hover:opacity-90"
-          >
-            Open the demo
-          </a>
-        </nav>
+        <a class="navlink" href="#how">How it works</a>
+        <a class="navlink" href="#verify">Verify</a>
+        <a class="btn btn-go" href={DEMO}>Open the live demo</a>
       </div>
     </header>
 
-    <main>
-      <!-- 1. HERO. Two columns: the argument on the left, the product on the
-           right. The right half used to be empty white. -->
-      <section class="overflow-hidden border-b border-border-soft bg-canvas">
-        <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-6 py-20 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:gap-14 lg:py-28">
-          <div class="min-w-0">
-            <p class="mb-6 font-mono text-xs uppercase tracking-widest text-brand-ink">
-              Inventory, built as a ledger
-            </p>
-            <h1 class="max-w-xl text-5xl font-semibold tracking-tight text-ink sm:text-6xl">
-              Stock you can actually trust.
-            </h1>
-            <p class="mt-6 max-w-xl text-lg leading-relaxed text-ink-mute">
-              Most inventory tools show you a number and ask you to believe it.
-              Crate shows you every row that produced the number, in the order it
-              happened, with the person who did it.
-            </p>
+    <main id="main">
+      <!-- 1. HERO. The ledger is the hero image, and it is real markup, so a
+           reader can select a row and read the reference out of it. -->
+      <section class="hero" id="top">
+        <div class="wrap">
+          <p class="eyebrow eyebrow-soft">Append-only inventory ledger</p>
+          <h1>Every number here is a sum of rows you can read.</h1>
+          <p class="lead">
+            Most inventory tools keep a stock count and let the app edit it.
+            Crate keeps the movements and adds them up, so a mistake stays on
+            the page with its reason and its author.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-go" href={DEMO}>Open the live demo</a>
+            <a class="btn btn-ghost" href={REPO}>Read the source</a>
+          </div>
 
-            <div class="mt-9 flex flex-col items-start gap-3 sm:flex-row">
-              <a
-                href="https://app.crate.ersaptaaristo.dev/sign-in"
-                class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-medium text-ink transition-opacity hover:opacity-90"
-              >
-                Open the live demo
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                  <path d="M5 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </a>
-              <a
-                href="#how"
-                class="inline-flex items-center gap-2 rounded-md border border-border bg-canvas px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-alt"
-              >
-                How it works
-              </a>
+          <div class="ledger">
+            <div class="ledger-head">
+              <span class="eyebrow">stock_movements</span>
+              <span class="mono stamp">append only &middot; no update &middot; no delete</span>
             </div>
-
-            <p class="mt-5 max-w-lg text-xs leading-relaxed text-ink-soft">
-              Sign in as <code class="font-mono text-ink">manager@crate.local</code>
-              with <code class="font-mono text-ink">ChangeMe!Manager</code>.
-              Seeded data, no signup, no email gate.
-            </p>
-          </div>
-
-          <!-- The shot runs past the container's right edge on wide screens.
-               Held inside the grid it renders about 530px, which is too small
-               to read a single KPI, and a product picture nobody can read is
-               decoration. The section clips the overflow so the page still
-               has no horizontal scroll. -->
-          <div class="min-w-0 lg:w-[136%]">
-            <img
-              src="/shots/dashboard-dark.png"
-              width="1440"
-              height="675"
-              alt="Crate dashboard showing total stock value, SKUs at or below reorder, and stock value by SKU"
-              class="shot shot-dark w-full"
-            />
+            <table>
+              <thead>
+                <tr>
+                  <th>When (UTC+7)</th>
+                  <th>Type</th>
+                  <th>Product</th>
+                  <th class="hide-sm">Bin</th>
+                  <th class="right">Qty</th>
+                  <th class="hide-md">Reason</th>
+                  <th class="hide-md">Reference</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  rows.map((r) => (
+                    <tr class={r.pair ? "pair" : undefined}>
+                      <td class={r.pair ? "t pair-mark" : "t"}>{r.when}</td>
+                      <td><span class="tag">{r.type}</span></td>
+                      <td>
+                        <div class="name">{r.name}</div>
+                        <div class="sku">{r.sku}</div>
+                      </td>
+                      <td class="hide-sm t">{r.bin}</td>
+                      <td class={`qty ${r.dir}`}>{r.qty}</td>
+                      <td class="hide-md t">{r.reason}</td>
+                      <td class="hide-md t">{r.ref}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      <!-- 2. TRUST STRIP. Uniform ink on every number. Colouring three or four
-           stats differently reads as a dashboard, not as a claim. -->
-      <section class="border-b border-border-soft bg-canvas-alt">
-        <div class="mx-auto max-w-6xl px-6 py-12">
-          <div class="grid grid-cols-2 gap-8 sm:grid-cols-4">
-            {trustStrip.map((stat) => (
-              <div class="flex flex-col gap-1.5">
-                <div class="text-3xl font-semibold tracking-tight text-ink">{stat.value}</div>
-                <div class="font-mono text-xs uppercase tracking-wider text-ink-soft">{stat.label}</div>
+      <!-- 2. THESIS. Names what the two marked rows prove, once. -->
+      <section class="thesis wrap">
+        <p class="lead-in">
+          The two marked rows carry one second, one reference, and opposite
+          signs.
+        </p>
+        <p>
+          That pair is a single Postgres transaction. A transfer that moved out
+          of A2 but never arrived in B1 is not a state this database is able to
+          hold, so it is not a bug that can be reported. On hand is never
+          stored: it is the sum of this table, read at query time.
+        </p>
+      </section>
+
+      <!-- 3. NUMBERS. Each one has the path a reader counts it from. -->
+      <section class="band">
+        <div class="wrap nums">
+          {
+            nums.map((s) => (
+              <div>
+                <div class="n">{s.n}</div>
+                <div class="k">{s.k}</div>
+                <div class="how mono">{s.how}</div>
               </div>
-            ))}
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- 4. RULES. Constraints, not features. -->
+      <section class="sec" id="how">
+        <div class="wrap">
+          <h2>Three rules the database enforces.</h2>
+          <p class="sub">
+            Not three features the interface promises. Each one is a constraint,
+            which means the application cannot opt out of it on a bad day.
+          </p>
+          <div class="rules">
+            {
+              rules.map((r) => (
+                <div class="rule">
+                  <p class="eyebrow num">{r.num}</p>
+                  <h3>{r.title}</h3>
+                  <p>{r.body}</p>
+                </div>
+              ))
+            }
           </div>
         </div>
       </section>
 
-      <!-- 3. THREE GUARANTEES. Equal status, uniform grid. A bento here would
-           claim one of them matters more, and none of them does. -->
-      <section id="how" class="border-b border-border-soft bg-canvas">
-        <div class="mx-auto max-w-6xl px-6 py-24">
-          <div class="mb-12 max-w-2xl">
-            <h2 class="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              How stock actually moves.
-            </h2>
-            <p class="mt-4 text-lg leading-relaxed text-ink-mute">
-              Three rules the database enforces, not three features the interface
-              promises.
-            </p>
-          </div>
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {guarantees.map((g) => (
-              <div class="flex flex-col gap-3 rounded-lg border border-border-soft bg-surface p-6">
-                <span class="font-mono text-xs tracking-widest text-brand-ink">{g.n}</span>
-                <h3 class="text-lg font-semibold text-ink">{g.title}</h3>
-                <p class="text-sm leading-relaxed text-ink-mute">{g.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. THE LEDGER, dark band. Crisp white type on near-black, no coloured
-           radial wash: on dark surfaces those go muddy (ui-audit sub-rule). -->
-      <section id="ledger" class="bg-canvas-deep">
-        <div class="mx-auto max-w-6xl px-6 py-24">
-          <div class="mb-12 max-w-2xl">
-            <p class="mb-5 font-mono text-xs uppercase tracking-widest text-brand-dim">
-              The part nobody screenshots
-            </p>
-            <h2 class="text-3xl font-semibold tracking-tight text-ink-invert sm:text-4xl">
-              Every number here is a sum of rows you can read.
-            </h2>
-            <p class="mt-4 text-lg leading-relaxed text-ink-invert-mute">
-              On hand is not a field that gets written to. It is the sum of the
-              ledger, computed at read time. That is why a corrected mistake still
-              shows the mistake, and why nobody can quietly make a discrepancy
-              disappear.
-            </p>
-          </div>
+      <!-- 5. MOVEMENTS, dark band. The same table, running. -->
+      <section class="sec dark">
+        <div class="wrap">
+          <p class="eyebrow">The part nobody screenshots</p>
+          <h2 class="spaced">This is the same table, running.</h2>
+          <p class="sub">
+            Filter it, sort it, scroll it. Every row carries who did it and
+            when, to the minute, in a date you can read rather than a relative
+            time that hides the year.
+          </p>
           <img
+            class="shot shot-wide"
             src="/shots/movements.png"
             width="1440"
             height="900"
-            alt="The Crate movement ledger, showing stock in, stock out, transfers, and adjustments with full timestamps and references"
-            class="shot shot-dark w-full"
+            alt="Crate movements screen: an append-only ledger of stock changes with type, product, bin, quantity, reason and reference columns."
           />
-          <dl class="mt-12 grid grid-cols-1 gap-8 border-t border-border-deep pt-10 sm:grid-cols-3">
-            <div>
-              <dt class="font-mono text-xs uppercase tracking-wider text-brand-dim">Paired</dt>
-              <dd class="mt-2 text-sm leading-relaxed text-ink-invert-mute">
-                A transfer writes two rows sharing one group id. Either both land
-                or neither does.
-              </dd>
-            </div>
-            <div>
-              <dt class="font-mono text-xs uppercase tracking-wider text-brand-dim">Attributed</dt>
-              <dd class="mt-2 text-sm leading-relaxed text-ink-invert-mute">
-                Every row carries who did it and when, to the minute, in full
-                dates rather than a relative time that hides the year.
-              </dd>
-            </div>
-            <div>
-              <dt class="font-mono text-xs uppercase tracking-wider text-brand-dim">Bounded</dt>
-              <dd class="mt-2 text-sm leading-relaxed text-ink-invert-mute">
-                Stock cannot go negative unless an admin turns on backorder, and
-                the switch is itself an audited setting.
-              </dd>
-            </div>
-          </dl>
+          <div class="notes">
+            {
+              notes.map((n) => (
+                <div>
+                  <p class="eyebrow">{n.title}</p>
+                  <p>{n.body}</p>
+                </div>
+              ))
+            }
+          </div>
         </div>
       </section>
 
-      <!-- 5. PURCHASE ORDERS. The state machine claim, with the shot that shows
-           all five states at once rather than a sentence saying they exist. -->
-      <section class="border-b border-border-soft bg-canvas">
-        <div class="mx-auto max-w-6xl px-6 py-24">
-          <div class="mb-12 max-w-2xl">
-            <h2 class="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Ordering, in the five states it really has.
-            </h2>
-            <p class="mt-4 text-lg leading-relaxed text-ink-mute">
-              Draft, sent, partial, received, cancelled. Partial is the one that
-              matters and the one most tools skip: a receipt of forty against an
-              order of sixty leaves twenty outstanding, and the order says so.
-            </p>
-          </div>
+      <!-- 6. ORDERS. The state that most tools skip. -->
+      <section class="sec">
+        <div class="wrap">
+          <h2>Ordering, in the five states it really has.</h2>
+          <p class="sub">
+            Draft, sent, partial, received, cancelled. Partial is the one that
+            matters and the one most tools skip: a receipt of forty against an
+            order of sixty leaves twenty outstanding, and the order says so.
+          </p>
           <img
+            class="shot shot-wide"
             src="/shots/orders.png"
             width="1440"
             height="900"
-            alt="Crate purchase orders listing twelve orders across all five states with suppliers, line counts, and ordered values"
-            class="shot shot-dark w-full"
+            alt="Crate purchase orders screen showing draft, sent, partial, received and cancelled states with expected and created dates."
           />
         </div>
       </section>
 
-      <!-- 6. DOUBT-CLEARING. Malewicz Section B: is it real, is it usable, is
-           the person behind it competent. Four links, no adjectives. -->
-      <section id="verify" class="border-b border-border-soft bg-canvas-alt">
-        <div class="mx-auto max-w-6xl px-6 py-24">
-          <div class="mb-12 max-w-2xl">
-            <p class="mb-5 font-mono text-xs uppercase tracking-widest text-brand-ink">
-              Nothing here needs my word for it
-            </p>
-            <h2 class="text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Check it yourself, in four places.
-            </h2>
-          </div>
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {verify.map((v) => (
-              <a
-                href={v.href}
-                class="group flex flex-col gap-3 rounded-lg border border-border-soft bg-canvas p-6 transition-colors hover:border-border"
-              >
-                <span class="text-sm font-semibold text-ink">{v.label}</span>
-                <p class="text-sm leading-relaxed text-ink-mute">{v.body}</p>
-                <span class="mt-1 inline-flex items-center gap-1.5 font-mono text-xs text-brand-ink">
-                  {v.cta}
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"
-                       class="transition-transform group-hover:translate-x-0.5">
-                    <path d="M5 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </span>
-              </a>
-            ))}
+      <!-- 7. VERIFY. A ruled list, not a third card grid. -->
+      <section class="sec band" id="verify">
+        <div class="wrap">
+          <p class="eyebrow eyebrow-soft">Nothing here needs my word for it</p>
+          <h2 class="spaced">Check it yourself, in three places.</h2>
+          <div class="checks">
+            {
+              checks.map((c) => (
+                <a class="check" href={c.href}>
+                  <h3>{c.title}</h3>
+                  <p>{c.body}</p>
+                  <p class="url mono">{c.url}</p>
+                </a>
+              ))
+            }
           </div>
         </div>
       </section>
 
-      <!-- 7. CLOSE. One action. The nav CTA and this one point to the same door. -->
-      <section class="bg-canvas">
-        <div class="mx-auto max-w-6xl px-6 py-24 text-center">
-          <h2 class="mx-auto max-w-2xl text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            The demo is seeded and open.
-          </h2>
-          <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-mute">
-            Eight products, twelve purchase orders, fifteen days of movement. Move
-            some stock and watch the ledger disagree with nobody.
-          </p>
-          <a
-            href="https://app.crate.ersaptaaristo.dev/sign-in"
-            class="mt-9 inline-flex items-center gap-2 rounded-md bg-brand px-6 py-3 text-sm font-medium text-ink transition-opacity hover:opacity-90"
-          >
-            Open the live demo
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-              <path d="M5 3l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </a>
+      <!-- 8. CLOSER. One action, and a recap that fills the second column. -->
+      <section class="sec">
+        <div class="wrap closer">
+          <div>
+            <h2>Open it and try to break the count.</h2>
+            <p class="sub">
+              Sell more than you hold. Cancel a half-received order. Correct a
+              count twice. The number will still be a sum of rows you can read.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-go" href={DEMO}>Open the live demo</a>
+              <a class="btn btn-ghost" href={REPO}>Read the source</a>
+            </div>
+          </div>
+          <div class="recap">
+            {
+              recap.map(([k, v]) => (
+                <div class="recap-row">
+                  <span>{k}</span>
+                  <span>{v}</span>
+                </div>
+              ))
+            }
+          </div>
         </div>
       </section>
     </main>
 
-    <footer class="border-t border-border-soft bg-canvas py-12">
-      <div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-2.5">
-          <span class="block h-3 w-3 rounded-[2px] bg-brand" aria-hidden="true"></span>
-          <p class="text-sm text-ink-soft">Crate, a portfolio project by Sapta.</p>
-        </div>
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-          <a href="https://app.crate.ersaptaaristo.dev" class="text-ink-mute underline-offset-4 transition-colors hover:text-ink hover:underline">Live demo</a>
-          <a href="https://github.com/tryea/crate-webapp" class="text-ink-mute underline-offset-4 transition-colors hover:text-ink hover:underline">App repo</a>
-          <a href="https://github.com/tryea/crate-landing" class="text-ink-mute underline-offset-4 transition-colors hover:text-ink hover:underline">Landing repo</a>
-        </div>
+    <footer class="ft">
+      <div class="wrap">
+        <span class="who">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d={mark} /></svg>
+          Crate, a portfolio project by Sapta.
+        </span>
+        <nav>
+          <a href={APP}>Live demo</a>
+          <a href={REPO}>App repo</a>
+          <a href={LANDING_REPO}>Landing repo</a>
+        </nav>
       </div>
     </footer>
   </body>

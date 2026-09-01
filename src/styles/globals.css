@@ -1,141 +1,812 @@
 @import "tailwindcss";
 
 /*
- * Crate marketing landing, token system.
+ * Crate marketing landing, token system and page styles.
  *
- * SUPERSEDES DEC-006. That record committed to a Mercury anchor with
- * `--primary` at oklch(0.205 0 0), chroma zero, and called it restraint.
- * Measured 12 Aug 2026: the page defined fourteen colours, eleven of them
- * pure greyscale, and the three chromatic ones never reached the screen.
- * A page with no brand colour is not restrained, it is unfinished, and it
- * reads as a shadcn neutral theme nobody ever chose. That is why this site
- * was never launched.
+ * ONE TYPEFACE. Archivo, self-hosted as a single variable woff2, is the whole
+ * type system. Geist is gone: it ships inside every Next.js starter, so using
+ * it is the typographic equivalent of leaving the default token palette in
+ * place. Monospace is gone too, because a mono face is a SECOND typeface. The
+ * job mono was doing here is columns of digits that line up, and that is
+ * `font-variant-numeric: tabular-nums` on Archivo, not another family.
  *
- * Two things changed here.
+ * NO UPPERCASE, NO POSITIVE TRACKING. Capitals with letter-spacing read as a
+ * second voice even when the family is identical. Hierarchy is carried by size,
+ * weight and colour only.
  *
- * ANCHOR: Resend, not Mercury. Mercury's grammar is built for non-technical
- * operators who need a regulator's reassurance. The people who read this page
- * are technical clients judging whether the author can build systems, and the
- * page was already speaking to them (mono eyebrows, mono stat labels) while
- * claiming a Mercury anchor in its comments. One anchor, stated once, honoured
- * everywhere.
+ * TWO INKS, BOTH DARK. #0B0B0B and #3F4145. The previous pair, #4D4D4D and
+ * #707070, parked the secondary role at contrast 8.45 and 4.95. Muted text in
+ * work that reads well sits between contrast 7 and 11; 4.5 is the legal floor,
+ * not the target. Dimming with `opacity` is forbidden on text: it produces grey
+ * that only happens to be computed a different way.
  *
- * BRAND COLOUR: amber. Not picked from a mood board. `oklch(0.78 0.14 78)` is
- * already the low-stock signal inside the product, so it is the one colour a
- * reader will meet again in the screenshots and again in the running app. It
- * also happens to be what a warehouse looks like.
- *
- * Warm surfaces stay FORBIDDEN (ui-audit Attio rejection). Colour rhythm comes
- * from a neutral grey band and a near-black band, never from tinted paper:
- *   white, then neutral grey, then white, then near-black, then white.
- *
- * Swapping the brand colour later is three lines: --brand, --brand-ink,
- * --brand-dim. Nothing else in this file hardcodes a hue.
+ * COLOUR. The action colour is neutral near-black with white type, matching the
+ * app's own primary button. Amber #8A4B00 is reserved for one meaning, low
+ * stock, so a reader meets it in the product and nowhere else. Rhythm between
+ * sections comes from a neutral grey band and a near-black band, never from
+ * tinted paper: warm surfaces are out.
  */
 
-@theme inline {
-  --color-canvas: var(--canvas);
-  --color-canvas-alt: var(--canvas-alt);
-  --color-canvas-deep: var(--canvas-deep);
-  --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-ink-mute: var(--ink-mute);
-  --color-ink-soft: var(--ink-soft);
-  --color-ink-invert: var(--ink-invert);
-  --color-ink-invert-mute: var(--ink-invert-mute);
-  --color-border: var(--border);
-  --color-border-soft: var(--border-soft);
-  --color-border-deep: var(--border-deep);
-  --color-brand: var(--brand);
-  --color-brand-ink: var(--brand-ink);
-  --color-brand-dim: var(--brand-dim);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-success: var(--success);
-  --color-info: var(--info);
+@theme {
+  --font-sans: Archivo, ui-sans-serif, system-ui, sans-serif;
+}
 
-  /* Geist self-hosted via @fontsource-variable/geist + geist-mono.
-     fontsource exposes the variable font as 'Geist Variable' / 'Geist Mono
-     Variable' (not bare 'Geist'). Match the family name exactly or the
-     browser falls through to the system fallback silently. */
-  --font-sans: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono Variable", "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-heading: var(--font-sans);
-
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.625rem;
-  --radius-xl: 0.875rem;
-  --radius-2xl: 1.125rem;
+@font-face {
+  font-family: Archivo;
+  src: url("/fonts/archivo.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-display: swap;
 }
 
 :root {
-  /* Surfaces. Every light surface is chroma 0, R=G=B. No warm paper. */
-  --canvas: oklch(1 0 0);
-  --canvas-alt: oklch(0.975 0 0);
-  --canvas-deep: oklch(0.185 0 0);   /* the dark band, near-black */
-  --surface: oklch(0.99 0 0);
+  --canvas: #ffffff;
+  --canvas-alt: #f7f7f7;
+  --canvas-deep: #131313;
 
-  /* Ink on light. */
-  --ink: oklch(0.145 0 0);
-  --ink-mute: oklch(0.4 0 0);
-  --ink-soft: oklch(0.556 0 0);
+  --ink: #0b0b0b;
+  --ink-mute: #3f4145;
+  --ink-soft: #3f4145;
+  --ink-invert: #ffffff;
+  --ink-invert-mute: #c7cace;
 
-  /* Ink on the dark band. */
-  --ink-invert: oklch(0.985 0 0);
-  --ink-invert-mute: oklch(0.72 0 0);
+  --line: #e4e4e4;
+  --line-deep: #2e2e2e;
 
-  --border: oklch(0.922 0 0);
-  --border-soft: oklch(0.95 0 0);
-  --border-deep: oklch(0.28 0 0);    /* borders inside the dark band */
-
-  /* Brand. --brand fills, --brand-ink is the only one safe as text on white
-     (the fill is far too light to read at 4.5:1), --brand-dim sits on dark. */
-  --brand: oklch(0.78 0.14 78);
-  --brand-ink: oklch(0.52 0.13 68);
-  --brand-dim: oklch(0.84 0.13 82);
-
-  --primary: oklch(0.185 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-
-  --success: oklch(0.62 0.14 152);
-  --info: oklch(0.66 0.13 235);
+  --brand: #0b0b0b; /* action = maximum-contrast neutral, same as the app */
+  --brand-ink: #8a4b00; /* amber, low-stock meaning only */
+  --neg: #a0331f;
+  --pos: #0b5c30;
 }
 
-@layer base {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.028em;
+  line-height: 1.08;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Without `color: inherit` a form control keeps the user-agent colour and
+   disappears on one of the two surfaces. Tailwind also turns buttons into
+   `cursor: default`; the restore belongs here once, not on every button. */
+button,
+a[role="button"],
+input,
+kbd {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
+button,
+[role="button"],
+summary,
+label[for] {
+  cursor: pointer;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-mute);
+}
+
+.eyebrow-soft {
+  color: var(--ink-soft);
+}
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease-out,
+    border-color 0.18s ease-out,
+    transform 0.18s ease-out;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  background: #ffffff;
+  color: #0a0a0a;
+}
+
+.skip:focus {
+  left: 16px;
+  top: 16px;
+  z-index: 99;
+  background: #fff;
+  color: #111;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
   * {
-    border-color: var(--border);
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
-  html {
-    font-family: var(--font-sans);
-    color: var(--ink);
-    background-color: var(--canvas);
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    padding: 0 20px;
   }
-  body {
-    background-color: var(--canvas);
-    color: var(--ink);
+  .btn {
+    height: 56px;
+    width: 100%;
   }
-  h1, h2, h3 {
-    font-weight: 600;
-    letter-spacing: -0.025em;
+}
+
+/* --- header --- */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(1.6) blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.hdr .wrap {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 64px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.brand svg {
+  width: 19px;
+  height: 19px;
+  fill: var(--ink);
+}
+
+.navlink {
+  font-size: 15px;
+  color: var(--ink-mute);
+  text-decoration: none;
+  padding: 8px 4px;
+  transition: color 0.15s ease-out;
+}
+
+.navlink:hover {
+  color: var(--ink);
+}
+
+.btn-go {
+  background: var(--brand);
+  color: #ffffff;
+  height: 40px;
+  padding: 0 18px;
+}
+
+.btn-go:hover {
+  background: #2a2a2a;
+}
+
+@media (max-width: 820px) {
+  .navlink {
+    display: none;
   }
-  /* Screenshots carry the product's own colour. Give them a real edge so they
-     read as artefacts sitting on the page, not as background imagery. */
-  .shot {
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border);
-    box-shadow:
-      0 1px 2px oklch(0 0 0 / 0.04),
-      0 12px 32px -12px oklch(0 0 0 / 0.18);
+}
+
+@media (max-width: 640px) {
+  .hdr .wrap {
+    gap: 16px;
   }
-  .shot-dark {
-    border-color: var(--border-deep);
-    box-shadow:
-      0 1px 2px oklch(0 0 0 / 0.3),
-      0 20px 48px -16px oklch(0 0 0 / 0.55);
+  .btn-go {
+    width: auto;
+    height: 40px;
   }
+}
+
+/* --- hero --- */
+.hero {
+  padding: 72px 0 0;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 4.6vw, 54px);
+  max-width: 24ch;
+  margin: 18px 0 20px;
+  text-wrap: balance;
+}
+
+.hero .lead {
+  font-size: 19px;
+  color: var(--ink-mute);
+  max-width: 52ch;
+}
+
+.cta-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.btn-ghost {
+  background: var(--canvas);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn-ghost:hover {
+  border-color: #bebebe;
+  background: var(--canvas-alt);
+}
+
+/* --- the ledger artefact --- */
+.ledger {
+  margin-top: 44px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--canvas);
+}
+
+.ledger-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--canvas-alt);
+  color: var(--ink-soft);
+}
+
+.ledger-head .stamp {
+  font-size: 12px;
+}
+
+.ledger table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ledger th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-align: left;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.ledger th.right {
+  text-align: right;
+}
+
+.ledger td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.ledger tr:last-child td {
+  border-bottom: 0;
+}
+
+.ledger .t {
+  color: var(--ink-mute);
+  font-size: 12px;
+}
+
+.ledger .name {
+  font-weight: 600;
+}
+
+.ledger .sku {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.qty {
+  font-weight: 600;
+  text-align: right;
+}
+
+.qty.out {
+  color: var(--neg);
+}
+
+.qty.in {
+  color: var(--pos);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  color: var(--ink-mute);
+  background: var(--canvas-alt);
+}
+
+.pair td {
+  background: #fafafa;
+}
+
+.pair-mark {
+  border-left: 2px solid var(--ink);
+}
+
+@media (max-width: 900px) {
+  .ledger .hide-md {
+    display: none;
+  }
+}
+
+/* Below 640 the table stops being a table. Kept as a table inside a card with
+   `overflow: hidden`, the Product column is clipped away silently while the
+   overflow gate still reports 0: the page does not scroll sideways, its content
+   simply goes missing. One column, quantity anchored right. */
+@media (max-width: 640px) {
+  .ledger .hide-sm {
+    display: none;
+  }
+  .ledger-head {
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    padding: 12px 16px;
+  }
+  .ledger table,
+  .ledger tbody,
+  .ledger tr,
+  .ledger td {
+    display: block;
+    width: 100%;
+  }
+  .ledger thead {
+    display: none;
+  }
+  .ledger tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 3px 14px;
+    align-items: center;
+  }
+  .ledger tr:last-child {
+    border-bottom: 0;
+  }
+  .ledger td {
+    padding: 0;
+    border: 0;
+    white-space: normal;
+    width: auto;
+  }
+  .ledger td:nth-child(1) {
+    grid-column: 1;
+    order: 1;
+  }
+  .ledger td:nth-child(3) {
+    grid-column: 1;
+    order: 2;
+  }
+  .ledger td:nth-child(2) {
+    grid-column: 1;
+    order: 3;
+    margin-top: 5px;
+  }
+  .ledger td:nth-child(5) {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    order: 4;
+    align-self: center;
+    font-size: 22px;
+    text-align: right;
+  }
+  .ledger .pair td {
+    background: transparent;
+  }
+  .ledger tr.pair {
+    background: #fafafa;
+    border-left: 3px solid var(--ink);
+  }
+  .ledger .pair-mark {
+    border-left: 0;
+  }
+}
+
+/* --- thesis --- */
+.thesis {
+  padding: 28px 0 96px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.thesis p {
+  font-size: 17px;
+  color: var(--ink-mute);
+}
+
+.thesis .lead-in {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+@media (max-width: 820px) {
+  .thesis {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-bottom: 64px;
+  }
+}
+
+/* --- sections --- */
+.band {
+  background: var(--canvas-alt);
+  border-block: 1px solid var(--line);
+}
+
+.sec {
+  padding: 96px 0;
+}
+
+.sec h2 {
+  font-size: clamp(28px, 3.4vw, 34px);
+  max-width: 20ch;
+}
+
+.sec h2.spaced {
+  margin-top: 16px;
+}
+
+.sec .sub {
+  margin-top: 14px;
+  font-size: 18px;
+  color: var(--ink-mute);
+  max-width: 62ch;
+}
+
+.dark {
+  background: var(--canvas-deep);
+  color: var(--ink-invert);
+}
+
+.dark .sub {
+  color: var(--ink-invert-mute);
+}
+
+.dark .eyebrow {
+  color: var(--ink-invert-mute);
+}
+
+/* --- verified numbers --- */
+.nums {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding: 56px 0;
+}
+
+.nums .n {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.nums .k {
+  margin-top: 10px;
+  color: var(--ink-soft);
+}
+
+.nums .how {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 820px) {
+  .nums {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+}
+
+/* --- rules --- */
+.rules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 44px;
+}
+
+.rule {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.rule h3 {
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+.rule p {
+  font-size: 15px;
+  color: var(--ink-mute);
+}
+
+.rule .num {
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+
+@media (max-width: 820px) {
+  .rules {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- shots --- */
+.shot {
+  border-radius: 12px;
+  border: 1px solid var(--line-deep);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 24px 56px -20px rgba(0, 0, 0, 0.6);
+}
+
+.shot-wide {
+  margin-top: 48px;
+}
+
+@media (min-width: 1180px) {
+  .shot-wide {
+    width: 118%;
+    max-width: none;
+  }
+}
+
+.notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line-deep);
+}
+
+.notes p {
+  font-size: 15px;
+  color: var(--ink-invert-mute);
+}
+
+.notes .eyebrow {
+  color: var(--ink-invert);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 820px) {
+  .notes {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+/* --- verify --- */
+.checks {
+  margin-top: 36px;
+  border-top: 1px solid var(--line);
+}
+
+.check {
+  display: grid;
+  grid-template-columns: 200px 1fr 260px;
+  gap: 32px;
+  align-items: baseline;
+  padding: 26px 8px;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  transition:
+    background-color 0.18s ease-out,
+    padding-left 0.18s ease-out;
+}
+
+.check:hover {
+  background: #ffffff;
+  padding-left: 16px;
+}
+
+.check h3 {
+  font-size: 18px;
+}
+
+.check p {
+  font-size: 15px;
+  color: var(--ink-mute);
+}
+
+.check .url {
+  font-size: 12px;
+  color: var(--ink-soft);
+  word-break: break-all;
+  text-align: right;
+}
+
+@media (max-width: 820px) {
+  .check {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .check .url {
+    text-align: left;
+  }
+}
+
+/* --- closer --- */
+.closer {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.recap {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.recap-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.recap-row:last-child {
+  border-bottom: 0;
+}
+
+.recap-row span:last-child {
+  color: var(--ink-mute);
+  font-size: 13px;
+}
+
+@media (max-width: 820px) {
+  .closer {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+/* --- footer --- */
+.ft {
+  padding: 36px 0 48px;
+  border-top: 1px solid var(--line);
+}
+
+.ft .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.ft a {
+  color: var(--ink-mute);
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+}
+
+.ft a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+.ft .who {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  color: var(--ink-mute);
+}
+
+.ft .who svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--ink-soft);
+}
+
+.ft nav {
+  display: flex;
+  gap: 24px;
 }
