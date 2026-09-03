@@ -341,7 +341,12 @@ label[for] {
 
 .ledger table {
   width: 100%;
-  border-collapse: collapse;
+  /* separate + spacing nol, bukan collapse: collapse menaruh setengah border di
+     tepi baris, jadi sel mulai 1px di kanan kepala ledger walau keduanya sudah
+     memakai padding 18px yang sama. Sel cuma punya border-bottom, jadi nol ada
+     border yang berganda dan tampilannya nol berubah. */
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 13px;
 }
 
@@ -497,7 +502,11 @@ label[for] {
 
 /* --- thesis --- */
 .thesis {
-  padding: 28px 0 96px;
+  /* padding-block, bukan shorthand: shorthand menyetel sumbu horizontal ke 0 dan
+     menimpa padding milik .wrap, yang menaruh paragraf ini 32px (20px di mobile)
+     di kiri setiap baris teks lain. Menyetel sumbu vertikal saja membuat satu
+     nilai .wrap tetap jadi satu-satunya sumber tepi kiri halaman. */
+  padding-block: 28px 96px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
