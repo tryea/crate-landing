@@ -319,7 +319,12 @@ label[for] {
 /* --- the ledger artefact --- */
 .ledger {
   margin-top: 44px;
-  border: 1px solid var(--line);
+  /* outline, bukan border: border memakan 1px sehingga setiap anak kartu mulai
+     1px di dalam garis teks halaman dan melahirkan tepi kedua. Bukan inset
+     box-shadow juga: itu dicat SEBELUM anak, jadi latar .ledger-head menimpa
+     ring-nya di sudut. outline nol memakan lebar dan dicat sesudah keturunan. */
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
   border-radius: 14px;
   overflow: hidden;
   background: var(--canvas);
@@ -493,7 +498,10 @@ label[for] {
   }
   .ledger tr.pair {
     background: #fafafa;
-    border-left: 3px solid var(--ink);
+    /* inset shadow, bukan border-left: border memakan lebar, jadi sel di baris
+       berpasangan mulai 3px di kanan sel baris biasa. Satu kolom nol boleh
+       punya dua tepi di dalam satu tabel. */
+    box-shadow: inset 3px 0 0 var(--ink);
   }
   .ledger .pair-mark {
     border-left: 0;
@@ -743,7 +751,8 @@ label[for] {
 }
 
 .recap {
-  border: 1px solid var(--line);
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
   border-radius: 14px;
   overflow: hidden;
 }
