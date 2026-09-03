@@ -666,6 +666,24 @@ label[for] {
   }
 }
 
+/* Bleed 118 persen itu keputusan desain (arah A, ketok 1 Sep) dan TETAP.
+   Yang dicabut cuma akibatnya: gambar itu melebar ke KANAN dari tepi konten
+   .wrap, jadi tepi kanannya jatuh di viewport/2 + 718 dan halaman meluap
+   sebanyak 718 - viewport/2. Positif dari 1180 sampai sekitar 1436, dan paling
+   parah di ujung SEMPIT pita, tempat kebanyakan laptop duduk.
+
+   Section yang memuat shot bleeding menjepit sumbu horizontalnya. Section itu
+   full-bleed selebar viewport, jadi jepitannya jatuh tepat di tepi layar.
+   Satu aturan untuk semua lebar, nol tambalan per breakpoint.
+
+   `clip`, bukan `hidden`: `hidden` bikin scroll container dan mematikan
+   `position: sticky` di keturunan. `clip` nol melakukan keduanya, dan
+   membiarkan `overflow-y` tetap visible sehingga box-shadow 56px milik .shot
+   nol ikut terpotong. */
+.sec:has(.shot-wide) {
+  overflow-x: clip;
+}
+
 .notes {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
